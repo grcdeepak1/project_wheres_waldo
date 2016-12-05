@@ -1,6 +1,9 @@
 var TAG = TAG || {}
 
 TAG.View = (function() {
+  var tagBoxSize = 50;
+  var tagOffset = tagBoxSize/2;
+
   var _imgClickListener = function() {
     var img = $('#waldo-img');
     img.on('click', function(e) {
@@ -13,10 +16,10 @@ TAG.View = (function() {
 
   var _displayTagBox = function(posX, posY) {
     var tagBox = $('<div class="tag-box"></div>');
-    tagBox.css({top: posY - 25 , left: posX - 25, position:'absolute'});
+    tagBox.css({top: posY - tagOffset , left: posX - tagOffset, position:'absolute'});
     $('#img-container').append(tagBox);
 
-    var charList = $('<ul class="dropdown"></ul>').hide();
+    var charList = $('<ul class="dropdown untagged"></ul>').hide();
     TAG.Model.getCharList().forEach( function(charName) {
       charList.append($('<li>'+charName+'</li>'))
     })
@@ -34,18 +37,38 @@ TAG.View = (function() {
   }
 
   var _charTagListener = function() {
-    $('#img-container').on("click", 'ul.dropdown li', function() {
+    $('#img-container').on("click", 'ul.dropdown.untagged li', function() {
       $(this).siblings().slideToggle(500);
+      $(this.parentElement).removeClass('untagged');
+      var posX = $(this.parentElement.parentElement).position().left + tagOffset;
+      var posY = $(this.parentElement.parentElement).position().top + tagOffset;
+      var name = $(this).html();
+      TAG.Model.tags().push(new TAG.TagModule.Tag(posX, posY, name));
     })
+  }
+
+  var _mouseEnterListener = function() {
+    $( "#img-container" ).mouseenter(function() {
+      $('.tag-box').show();
+    });
+  }
+
+  var _mouseLeaveListener = function() {
+    $( "#img-container" ).mouseleave(function() {
+      $('.tag-box').hide();
+    });
   }
 
   var tag = function(posX, posY) {
     _displayTagBox(posX, posY);
   }
 
+
   var init = function() {
     _imgClickListener();
     _charTagListener();
+    _mouseEnterListener();
+    _mouseLeaveListener();
   }
   return {
     init: init,

@@ -12,11 +12,11 @@ TAG.Model = (function() {
   var getCharList = function() {
     return _charList;
   }
-  var getTags = function() {
+  var tags = function() {
     return _tags;
   }
   return {
     getCharList: getCharList,
-    getTags: getTags
+    tags: tags,
   }
 })();
