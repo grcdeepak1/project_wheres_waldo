@@ -101,7 +101,8 @@ TAG.View = (function() {
   }
 
   var _deleteTagListener = function() {
-    $('#img-container').on("click", '.delete-link', function() {
+    $('#img-container').on("click", '.delete-link', function(e) {
+      e.preventDefault();
       TAG.Controller.deleteTag(tagParams($(this.parentElement.parentElement)));
     });
   }

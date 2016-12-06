@@ -26,7 +26,7 @@ class TagsController < ApplicationController
   def destroy
     @tag = Tag.find(params[:id])
     respond_to do |format|
-      if @tag.destroy!
+      if @tag && @tag.destroy!
         flash[:success] = "tag deleted!"
         format.html { }
         format.json { render json: @tag }
