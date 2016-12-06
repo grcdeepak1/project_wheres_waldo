@@ -15,8 +15,13 @@ TAG.Model = (function() {
   var tags = function() {
     return _tags;
   }
+
+  var removeLastTag = function() {
+    _tags.pop();
+  }
   return {
     getCharList: getCharList,
     tags: tags,
+    removeLastTag: removeLastTag,
   }
 })();

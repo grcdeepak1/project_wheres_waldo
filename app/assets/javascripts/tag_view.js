@@ -44,6 +44,7 @@ TAG.View = (function() {
       var posY = $(this.parentElement.parentElement).position().top + tagOffset;
       var name = $(this).html();
       TAG.Model.tags().push(new TAG.TagModule.Tag(posX, posY, name));
+      TAG.Controller.persistTag(posX, posY, name);
     })
   }
 
@@ -59,10 +60,28 @@ TAG.View = (function() {
     });
   }
 
+  var renderTags = function(tags) {
+    tags.forEach( function(tag) {
+      _renderTag(tag.xCoordinate, tag.yCoordinate, tag.name);
+    })
+  }
+
+  var _renderTag = function(posX, posY, name) {
+    var tagBox = $('<div class="tag-box"></div>').hide();
+    tagBox.css({top: posY - tagOffset , left: posX - tagOffset, position:'absolute'});
+    $('#img-container').append(tagBox);
+    var charList = $('<ul class="dropdown"></ul>');
+    charList.append($('<li>'+name+'</li>'))
+    tagBox.append(charList);
+  }
+
   var tag = function(posX, posY) {
     _displayTagBox(posX, posY);
   }
 
+  var removeLastTag = function() {
+    $('.tag-box').last().remove()
+  }
 
   var init = function() {
     _imgClickListener();
@@ -72,5 +91,7 @@ TAG.View = (function() {
   }
   return {
     init: init,
+    renderTags: renderTags,
+    removeLastTag: removeLastTag,
   }
 })();
