@@ -1,9 +1,33 @@
 var TAG = TAG || {}
 
 TAG.Controller = (function(Model, View) {
+  var gameInterval;
+
   var init = function() {
     TAG.View.init();
+    TAG.Model.init();
     render();
+    gameInterval = setInterval(function(){
+      isGameOver();
+      TAG.View.tic();
+    }, 1000);
+  }
+
+  var isGameOver = function() {
+    if (TAG.Model.getCharList().length === 0) {
+      console.log("GameOver");
+      clearInterval(gameInterval);
+      //Prompt for Name if high
+
+
+    }
+
+  }
+
+  var newGame = function() {
+    clearInterval(gameInterval);
+    TAG.View.clearAllTags();
+    init();
   }
 
   var render = function() {
@@ -39,7 +63,8 @@ TAG.Controller = (function(Model, View) {
 
       success: function(tag) {
         console.log("New Tag Created");
-        TAG.Model.tags().push(new TAG.TagModule.Tag(tag.id, tag.xCoordinate, tag.yCoordinate, tag.name));
+        TAG.Model.removeCharFromList(tag.name);
+        // TAG.Model.tags().push(new TAG.TagModule.Tag(tag.id, tag.xCoordinate, tag.yCoordinate, tag.name));
         TAG.View.addIdToLastTag(tag.id);
       },
 
@@ -66,6 +91,7 @@ TAG.Controller = (function(Model, View) {
       success: function(tag) {
         console.log("tag deleted :"+ tag);
         $("[data-id='" + tag.id + "']").remove();
+        TAG.Model.addCharToList(tag.name);
       },
 
       error: function( xhr, status, errorThrown ) {
@@ -87,6 +113,7 @@ TAG.Controller = (function(Model, View) {
   return {
     init: init,
     persistTag: persistTag,
-    deleteTag: deleteTag
+    deleteTag: deleteTag,
+    newGame: newGame
   }
 })(TAG.Model, TAG.View);
