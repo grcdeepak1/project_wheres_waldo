@@ -39,6 +39,8 @@ TAG.Controller = (function(Model, View) {
 
       success: function(tag) {
         console.log("New Tag Created");
+        TAG.Model.tags().push(new TAG.TagModule.Tag(tag.id, tag.xCoordinate, tag.yCoordinate, tag.name));
+        TAG.View.addIdToLastTag(tag.id);
       },
 
       error: function( xhr, status, errorThrown ) {
@@ -53,6 +55,30 @@ TAG.Controller = (function(Model, View) {
     });
   }
 
+  var deleteTag = function(tagParams) {
+    console.log(tagParams);
+    $.ajax({
+      url: '/tags/' + tagParams.id + '.json',
+      type: "DELETE",
+      contentType: "application/json",
+      dataType: "json",
+
+      success: function(tag) {
+        console.log("tag deleted :"+ tag);
+        $("[data-id='" + tag.id + "']").remove();
+      },
+
+      error: function( xhr, status, errorThrown ) {
+          console.log( "Error: " + errorThrown );
+          console.log( "Status: " + status );
+      },
+
+      complete: function( xhr, status ) {
+          console.log( "The request is complete!" );
+      }
+    });
+  }
+
   var removeLastTag = function() {
     TAG.Model.removeLastTag();
     TAG.View.removeLastTag();
@@ -61,5 +87,6 @@ TAG.Controller = (function(Model, View) {
   return {
     init: init,
     persistTag: persistTag,
+    deleteTag: deleteTag
   }
 })(TAG.Model, TAG.View);

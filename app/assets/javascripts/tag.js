@@ -3,9 +3,10 @@ var TAG = TAG || {}
 TAG.TagModule = (function() {
 
   //Constructor
-  function Tag(xCoordinate, yCoordinate, name) {
-    this.xCoordinate = xCoordinate;
-    this.yCoordinate = yCoordinate;
+  function Tag(id, xCoordinate, yCoordinate, name) {
+    this.id          = id;
+    this.xCoordinate = Math.floor(xCoordinate);
+    this.yCoordinate = Math.floor(yCoordinate);
     this.name        = name;
   }
 

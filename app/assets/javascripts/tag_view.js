@@ -7,8 +7,8 @@ TAG.View = (function() {
   var _imgClickListener = function() {
     var img = $('#waldo-img');
     img.on('click', function(e) {
-    var posX = e.pageX - $(e.target.parentNode).position().left,
-        posY = e.pageY - $(e.target.parentNode).position().top;
+      var posX = e.pageX - $(e.target.parentNode).position().left,
+          posY = e.pageY - $(e.target.parentNode).position().top;
       console.log("clicked " + posX + ", " + posY);
       tag(posX, posY);
     });
@@ -43,36 +43,31 @@ TAG.View = (function() {
       var posX = $(this.parentElement.parentElement).position().left + tagOffset;
       var posY = $(this.parentElement.parentElement).position().top + tagOffset;
       var name = $(this).html();
-      TAG.Model.tags().push(new TAG.TagModule.Tag(posX, posY, name));
+
+      var deleteLink = $('<a href="#" class="delete-link">delete</a>').hide();
+      $(this.parentElement).append(deleteLink);
       TAG.Controller.persistTag(posX, posY, name);
     })
   }
 
-  var _mouseEnterListener = function() {
-    $( "#img-container" ).mouseenter(function() {
-      $('.tag-box').show();
-    });
-  }
 
-  var _mouseLeaveListener = function() {
-    $( "#img-container" ).mouseleave(function() {
-      $('.tag-box').hide();
-    });
-  }
 
   var renderTags = function(tags) {
     tags.forEach( function(tag) {
-      _renderTag(tag.xCoordinate, tag.yCoordinate, tag.name);
+      _renderTag(tag.id, tag.xCoordinate, tag.yCoordinate, tag.name);
     })
   }
 
-  var _renderTag = function(posX, posY, name) {
+  var _renderTag = function(id, posX, posY, name) {
     var tagBox = $('<div class="tag-box"></div>').hide();
+    tagBox.attr('data-id', id);
     tagBox.css({top: posY - tagOffset , left: posX - tagOffset, position:'absolute'});
     $('#img-container').append(tagBox);
     var charList = $('<ul class="dropdown"></ul>');
     charList.append($('<li>'+name+'</li>'))
     tagBox.append(charList);
+    var deleteLink = $('<a class="delete-link">delete</a>').hide();
+    charList.append(deleteLink);
   }
 
   var tag = function(posX, posY) {
@@ -83,15 +78,59 @@ TAG.View = (function() {
     $('.tag-box').last().remove()
   }
 
+  var _tagHoverListener = function() {
+    $('#img-container').on({
+      mouseenter: function () {
+        $(this).find('.delete-link').show();
+      },
+      mouseleave: function () {
+        $(this).find('.delete-link').hide();
+      }
+    }, '.tag-box' );
+  }
+
+  var _imgHoverListener = function() {
+    $('#img-container').on({
+      mouseenter: function () {
+        $('.tag-box').show();
+      },
+      mouseleave: function () {
+        $('.tag-box').hide();
+      }
+    });
+  }
+
+  var _deleteTagListener = function() {
+    $('#img-container').on("click", '.delete-link', function() {
+      TAG.Controller.deleteTag(tagParams($(this.parentElement.parentElement)));
+    });
+  }
+
+  var tagParams = function(tagBox) {
+    var pos = $(tagBox).position();
+    return {
+       id: Number(tagBox.attr('data-id')),
+       x: Math.floor(pos.left) + 25,
+       y: Math.floor(pos.top) + 25,
+       name: tagBox.find('li:visible').html()
+    }
+  }
+
+  var addIdToLastTag = function(id) {
+    $('.tag-box').last().attr('data-id', id);
+  }
+
   var init = function() {
     _imgClickListener();
     _charTagListener();
-    _mouseEnterListener();
-    _mouseLeaveListener();
+    _imgHoverListener();
+    _tagHoverListener();
+    _deleteTagListener();
   }
   return {
     init: init,
     renderTags: renderTags,
     removeLastTag: removeLastTag,
+    addIdToLastTag: addIdToLastTag,
   }
 })();
