@@ -25,19 +25,12 @@ TAG.View = (function() {
     })
     tagBox.append(charList);
     charList.slideDown(500);
-  }
-
-  var _displayCharList = function(posX, posY) {
-    var charList = $('<ul class="dropdown"></ul>');
-    TAG.Model.getCharList().forEach( function(charName) {
-      charList.append($('<li>'+charName+'</li>'))
-    })
-    charList.css({top: posY, left: posX, position:'absolute'});
-    $('#img-container').append(charList);
+    $('#waldo-img').off("click");
   }
 
   var _charTagListener = function() {
-    $('#img-container').on("click", 'ul.dropdown.untagged li', function() {
+    $('#img-container').on("click", 'ul.dropdown.untagged li', function(e) {
+      e.stopPropagation();
       $(this).siblings().slideToggle(500);
       $(this.parentElement).removeClass('untagged');
       var posX = $(this.parentElement.parentElement).position().left + TAG_OFFSET;
@@ -47,6 +40,7 @@ TAG.View = (function() {
       var deleteLink = $('<a href="#" class="delete-link">delete</a>').hide();
       $(this.parentElement).append(deleteLink);
       TAG.Controller.persistTag(posX, posY, name);
+      _imgClickListener();
     })
   }
 
@@ -56,6 +50,14 @@ TAG.View = (function() {
     tags.forEach( function(tag, index, tags_array) {
       _renderTag(tag.id, tag.xCoordinate, tag.yCoordinate, tag.name);
       // TAG.Model.tags().push(new TAG.TagModule.Tag(tag.id, tag.xCoordinate, tag.yCoordinate, tag.name));
+    })
+  }
+
+  var renderScores = function(scores) {
+    var scoreTable = $('#score-tbody');
+    scoreTable.children().remove()
+    scores.forEach( function(score, index) {
+      scoreTable.append($('<tr><td>'+score.name+'</td><td>'+score.high_score+'</td></tr>'))
     })
   }
 
@@ -127,16 +129,20 @@ TAG.View = (function() {
   }
 
   var clearAllTags = function() {
-    $.each($('.tag-box'), function(index, tagBox) {
-      TAG.Controller.deleteTag(tagParams(tagBox));
-    })
+    $('.tag-box').remove();
   }
 
-  var _newGameListener = function() {
+  var newGameListener = function() {
     $('#new-game').on("click", function(e) {
-      e.preventDefault();
       TAG.Controller.newGame();
     });
+  }
+
+  var gameOverAction = function() {
+    $('#waldo-img').off('click');
+    $('#img-container').off();
+    $('#new-game').off();
+    console.log("Disable all listeners");
   }
 
   var init = function() {
@@ -146,7 +152,7 @@ TAG.View = (function() {
     _imgHoverListener();
     _tagHoverListener();
     _deleteTagListener();
-    _newGameListener();
+    newGameListener();
   }
   return {
     init: init,
@@ -155,5 +161,8 @@ TAG.View = (function() {
     removeLastTag: removeLastTag,
     addIdToLastTag: addIdToLastTag,
     clearAllTags: clearAllTags,
+    renderScores: renderScores,
+    gameOverAction: gameOverAction,
+    newGameListener: newGameListener,
   }
 })();

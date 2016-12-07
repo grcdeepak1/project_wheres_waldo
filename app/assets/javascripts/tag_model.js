@@ -10,6 +10,10 @@ TAG.Model = (function() {
     _tags.push(tagObject);
   }
 
+  var initCharList = function() {
+    _charList = ['Waldo', 'Wenda', 'Odlaw', 'Whizard Whitebeard', 'Woof'];
+  }
+
   var getCharList = function() {
     return _charList;
   }
@@ -54,5 +58,6 @@ TAG.Model = (function() {
     gameStartTime: gameStartTime,
     removeCharFromList: removeCharFromList,
     addCharToList: addCharToList,
+    initCharList: initCharList,
   }
 })();

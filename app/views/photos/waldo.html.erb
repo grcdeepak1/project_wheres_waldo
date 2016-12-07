@@ -1,11 +1,27 @@
-<h1>Where is Waldo</h1>
-<p>Time : <span id="time-counter">0</span> <button type="button" id="new-game" class="btn btn-primary">New Game</button>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <h1>Where is Waldo</h1>
+      <p class="text-center">Time : <span id="time-counter">0</span> <button type="button" id="new-game" class="btn btn-primary">New Game</button></p>
+    </div>
+  </div>
+</nav>
 <p>
 <div class="container">
   <div class="row">
     <div class="col-sm-2">
-      <h4>High Scores</h4>
-    </div>
+      <h4 class="text-center">High Scores</h4>
+      <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Score</th>
+      </tr>
+      </thead>
+      <tbody id="score-tbody">
+      </tbody>
+      </table>
+      </div>
     <div class="col-sm-10" id="img-container">
       <img id = "waldo-img" src=<%=image_url("waldo.jpg")%> >
     </div>

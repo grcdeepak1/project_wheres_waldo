@@ -38,6 +38,21 @@ class TagsController < ApplicationController
     end
   end
 
+  def destroy_all
+    @tags = Tag.destroy_all
+    respond_to do |format|
+      if @tags
+        flash[:success] = "tags deleted!"
+        format.html { }
+        format.json { render json: @tags }
+      else
+        flash[:danger] = "Unable to delete this tags!"
+        format.html { }
+        format.json { render nothing: true, status: 400 }
+      end
+    end
+  end
+
   private
   def tag_params
     params.require(:tag).permit(:xCoordinate, :yCoordinate, :name)
